@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+>
+
+<h:head>
+    <h:outputStylesheet library="css" name="diploma.css"/>
+</h:head>
+
+<h:body>
+
+    <h1>Collaborative Filtering</h1>
+    <h:form id="form">
+        <h:panelGrid columns="2">
+
+            <h:panelGrid columns="1">
+
+                <p:panelGrid columns="5" styleClass="ui-noborder">
+                    <p:commandButton id="getRecommendationButton" value="recommend"
+                                     disabled="#{uiBean.disabledRecommendButton}"
+                                     actionListener="#{uiBean.onRecommendButtonClick()}"
+                                     update=":recoForm:recommendationsTable"
+                                     onclick="PF('getRecommendationDlg').show();"/>
+                </p:panelGrid>
+                <p:dataTable stickyHeader="true" id="usersTable" value="#{uiBean.usersList}" var="user"
+                             styleClass="order-table"
+                             rowClasses="order-table-odd-row,order-table-even-row"
+                             selectionMode="single" selection="#{uiBean.selectedUser}" rowKey="#{user.id}"
+                             scrollable="true" scrollHeight="250"
+                >
+                    <p:ajax event="rowSelect" listener="#{uiBean.onRowSelect}"
+                            update=":form:moviesTable :form:getRecommendationButton :recoForm:recommendationsTable"/>
+                    <f:facet name="header">
+                        Users
+                    </f:facet>
+
+                    <p:column headerText="Name" sortBy="#{user.name}">
+                        <h:outputText value="#{user.name}"/>
+                    </p:column>
+
+                    <p:column headerText="Tariff" sortBy="#{user.tariff}">
+                        <h:outputText value="#{user.tariff}"/>
+                    </p:column>
+
+                    <p:column headerText="Movies Watched" sortBy="#{user.moviesWatched}">
+                        <h:outputText value="#{user.moviesWatched}"/>
+                    </p:column>
+
+                    <p:column headerText="Average Mark" sortBy="#{user.averageMark}">
+                        <h:outputText value="#{user.averageMark}">
+                            <f:convertNumber pattern="#0.000"/>
+                        </h:outputText>
+                    </p:column>
+
+                </p:dataTable>
+            </h:panelGrid>
+
+            <h:panelGrid columns="1">
+                <h:panelGrid columns="5">
+                    <p:panelGrid style="margin-bottom: 36px;"/>
+                </h:panelGrid>
+                <p:dataTable stickyHeader="true" id="moviesTable" value="#{uiBean.moviesList}" var="movie"
+                             widgetVar="movieTable"
+                             styleClass="order-table"
+                             rowClasses="order-table-odd-row,order-table-even-row"
+                             scrollable="true" scrollHeight="250"
+                >
+                    <f:facet name="header">
+                        Movies
+                    </f:facet>
+
+                    <p:column headerText="Name" sortBy="#{movie.name}">
+                        <h:outputText value="#{movie.name}"/>
+                    </p:column>
+
+                    <p:column headerText="Genre" sortBy="#{movie.genre}">
+                        <h:outputText value="#{movie.genre}"/>
+                    </p:column>
+
+                </p:dataTable>
+
+            </h:panelGrid>
+
+        </h:panelGrid>
+    </h:form>
+
+    <p:dialog resizable="false" height="300" width="450" id="addOrderDlg" widgetVar="getRecommendationDlg" modal="true"
+              header="Movies you should see">
+
+        <h:form id="recoForm">
+            <p:growl showDetail="true"/>
+            <p:panelGrid columns="1" styleClass="ui-noborder">
+                <p:dataTable stickyHeader="true" id="recommendationsTable" value="#{uiBean.recommendationList}"
+                             var="reco"
+                             styleClass="order-table"
+                             rowClasses="order-table-odd-row,order-table-even-row">
+
+                    <p:column headerText="Name">
+                        <h:outputText value="#{reco.name}"/>
+                    </p:column>
+
+                    <p:column headerText="Genre">
+                        <h:outputText value="#{reco.genre}"/>
+                    </p:column>
+
+                </p:dataTable>
+                <p:commandButton value="close" onclick="PF('getRecommendationDlg').hide();"/>
+            </p:panelGrid>
+        </h:form>
+
+    </p:dialog>
+
+</h:body>
+</html>
